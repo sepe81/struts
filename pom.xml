@@ -183,6 +183,7 @@
                             <configuration>
                                 <!-- TODO delete forkCount=0 after fix of https://issues.apache.org/jira/browse/SUREFIRE-1588 -->
                                 <forkCount>0</forkCount>
+                                <argLine>${surefireArgLine}</argLine>
                             </configuration>
                         </plugin>
                     </plugins>
@@ -294,7 +295,7 @@
                         </dependency>
                     </dependencies>
                     <configuration>
-                        <argLine>-Duser.language=en -Duser.region=US</argLine>
+                        <argLine>${surefireArgLine} -Duser.language=en -Duser.region=US</argLine>
                         <includes>
                             <include>**/*Test.java</include>
                         </includes>
@@ -478,7 +479,29 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>surefireArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <defaultGoal>install</defaultGoal>
