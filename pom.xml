@@ -104,7 +104,7 @@
         <tiles.version>3.0.8</tiles.version>
         <tiles-request.version>1.0.7</tiles-request.version>
         <log4j2.version>2.11.1</log4j2.version>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.10.0.pr3</jackson.version>
         <!-- FIXME: drop once a new 2.9.10 will be out and all packages will be in sync -->
         <jackson-databind.version>2.9.9.3</jackson-databind.version>
 
