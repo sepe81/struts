@@ -163,7 +163,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>5.4.3.Final</version>
+            <version>6.1.4.Final</version>
         </dependency>
 
         <!-- The Servlet API mocks in Spring Framework 4.x only supports Servlet 3.0 and higher.
