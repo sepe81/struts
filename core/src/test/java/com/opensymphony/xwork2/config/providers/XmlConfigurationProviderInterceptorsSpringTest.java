@@ -29,28 +29,17 @@ import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.Map;
 
-
-/**
- * Created by IntelliJ IDEA.
- * User: Mike
- * Date: May 6, 2003
- * Time: 3:10:16 PM
- * To change this template use Options | File Templates.
- */
 public class XmlConfigurationProviderInterceptorsSpringTest extends ConfigurationTestBase {
 
-    InterceptorConfig noopInterceptor = new InterceptorConfig.Builder("noop", NoOpInterceptor.class.getName()).build();
     ObjectFactory objectFactory;
     StaticApplicationContext sac;
-
 
     public void testInterceptorsLoadedFromSpringApplicationContext() throws ConfigurationException {
         sac.registerSingleton("noop-interceptor", NoOpInterceptor.class, new MutablePropertyValues());
 
         final String filename = "com/opensymphony/xwork2/config/providers/xwork-test-interceptors-spring.xml";
 
-        // Expect a ConfigurationException to be thrown if the interceptor reference
-        // cannot be resolved
+        // Expect a ConfigurationException to be thrown if the interceptor reference cannot be resolved
         ConfigurationProvider provider = buildConfigurationProvider(filename);
 
         // execute the configuration
@@ -58,7 +47,7 @@ public class XmlConfigurationProviderInterceptorsSpringTest extends Configuratio
         provider.loadPackages();
 
         PackageConfig pkg = configuration.getPackageConfig("default");
-        Map interceptorConfigs = pkg.getInterceptorConfigs();
+        Map<String, Object> interceptorConfigs = pkg.getInterceptorConfigs();
 
         // assertions for size
         assertEquals(1, interceptorConfigs.size());
@@ -73,11 +62,6 @@ public class XmlConfigurationProviderInterceptorsSpringTest extends Configuratio
         super.setUp();
 
         sac = new StaticApplicationContext();
-
-        //SpringObjectFactory objFactory = new SpringObjectFactory();
-        //objFactory.setApplicationContext(sac);
-        //ObjectFactory.setObjectFactory(objFactory);
-
         objectFactory = container.getInstance(ObjectFactory.class);
     }
 }
