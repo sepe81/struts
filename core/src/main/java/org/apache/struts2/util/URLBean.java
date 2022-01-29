@@ -19,7 +19,6 @@
 package org.apache.struts2.util;
 
 import com.opensymphony.xwork2.ActionContext;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.views.util.DefaultUrlHelper;
 import org.apache.struts2.views.util.UrlHelper;
 
@@ -30,8 +29,6 @@ import java.util.Map;
 
 /**
  * A bean that can generate a URL.
- *
- * FIXME: remove?
  */
 public class URLBean {
 
@@ -61,7 +58,7 @@ public class URLBean {
         Map<String, Object> fullParams = null;
 
         if (params != null) {
-            fullParams = new HashMap<String, Object>();
+            fullParams = new HashMap<>();
         }
 
         if (page == null) {
@@ -84,7 +81,7 @@ public class URLBean {
 
     public URLBean addParameter(String name, Object value) {
         if (params == null) {
-            params = new HashMap<String, String>();
+            params = new HashMap<>();
         }
 
         if (value == null) {
