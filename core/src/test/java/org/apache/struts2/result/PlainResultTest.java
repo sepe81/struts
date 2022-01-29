@@ -28,32 +28,32 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 public class PlainResultTest extends StrutsInternalTestCase {
 
+    private static final String CHARSET_UTF8 = "charset=UTF-8";
+
     private MockHttpServletResponse response;
+
     private MockActionInvocation invocation;
 
     public void testWritePlainText() throws Exception {
-        PlainResult result = (PlainResult) response ->
-            response.write("test").withContentTypeTextPlain();
+        PlainResult result = response -> response.write("test").withContentTypeTextPlain();
 
         result.execute(invocation);
 
         assertEquals("test", response.getContentAsString());
-        assertEquals("text/plain; charset=UTF-8", response.getContentType());
+        assertEquals("text/plain; " + CHARSET_UTF8, response.getContentType());
     }
 
     public void testWritePlainHtml() throws Exception {
-        PlainResult result = (PlainResult) response ->
-            response.write("<b>test</b>").withContentTypeTextHtml();
+        PlainResult result = response -> response.write("<b>test</b>").withContentTypeTextHtml();
 
         result.execute(invocation);
 
         assertEquals("<b>test</b>", response.getContentAsString());
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals("text/html; " + CHARSET_UTF8, response.getContentType());
     }
 
     public void testWriteJson() throws Exception {
-        PlainResult result = (PlainResult) response ->
-            response.write("{ 'value': 'test' }").withContentTypeJson();
+        PlainResult result = response -> response.write("{ 'value': 'test' }").withContentTypeJson();
 
         result.execute(invocation);
 
@@ -62,7 +62,7 @@ public class PlainResultTest extends StrutsInternalTestCase {
     }
 
     public void testWriteContentTypeCsvWithCookie() throws Exception {
-        PlainResult result = (PlainResult) response ->
+        PlainResult result = response ->
             response.writeLine("name;value")
                 .withContentType("text/csv")
                 .withCookie("X-Test", "test")
@@ -76,7 +76,7 @@ public class PlainResultTest extends StrutsInternalTestCase {
     }
 
     public void testHeaders() throws Exception {
-        PlainResult result = (PlainResult) response ->
+        PlainResult result = response ->
             response.withHeader("X-String", "test")
                 .withHeader("X-Date", 0L)
                 .withHeader("X-Number", 100)
@@ -85,7 +85,7 @@ public class PlainResultTest extends StrutsInternalTestCase {
         result.execute(invocation);
 
         assertEquals("", response.getContentAsString());
-        assertEquals("text/plain; charset=UTF-8", response.getContentType());
+        assertEquals("text/plain; " + CHARSET_UTF8, response.getContentType());
         assertEquals("test", response.getHeader("X-String"));
         assertEquals("Thu, 01 Jan 1970 00:00:00 GMT", response.getHeader("X-Date"));
         assertEquals("100", response.getHeader("X-NUmber"));
@@ -94,8 +94,7 @@ public class PlainResultTest extends StrutsInternalTestCase {
     public void testExceptionOnCommitted() throws Exception {
         response.setCommitted(true);
 
-        PlainResult result = (PlainResult) response ->
-            response.write("");
+        PlainResult result = response -> response.write("");
 
         try {
             result.execute(invocation);
