@@ -93,7 +93,7 @@
             <name>The Apache Software License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
-            <comments />
+            <comments/>
         </license>
     </licenses>
 
@@ -344,10 +344,10 @@
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
                         <licenses>
-                            <licens implementation="org.apache.rat.analysis.license.ApacheSoftwareLicense20" />
+                            <licens implementation="org.apache.rat.analysis.license.ApacheSoftwareLicense20"/>
                         </licenses>
                         <licenseFamilies>
-                            <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily" />
+                            <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily"/>
                         </licenseFamilies>
                         <includes>
                             <include>pom.xml</include>
@@ -396,7 +396,7 @@
                             <id>enforce</id>
                             <configuration>
                                 <rules>
-                                    <dependencyConvergence />
+                                    <dependencyConvergence/>
                                 </rules>
                             </configuration>
                             <goals>
@@ -835,7 +835,7 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jasper</artifactId>
-                <version>8.5.53</version>
+                <version>8.5.76</version>
                 <scope>provided</scope>
             </dependency>
 
