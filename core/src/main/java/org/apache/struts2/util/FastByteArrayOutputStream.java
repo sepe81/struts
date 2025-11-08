@@ -51,6 +51,31 @@ public class FastByteArrayOutputStream extends OutputStream {
 
     private static final int DEFAULT_BLOCK_SIZE = 8192;
 
+    /**
+     * Application-specific temporary directory, initialized once when class is loaded.
+     * This is used for secure temporary file creation with UUID-based naming.
+     * May be null if directory creation fails during initialization.
+     */
+    private static final Path APP_TEMP_DIR = initializeAppTempDir();
+
+    /**
+     * Initializes the application temporary directory once when the class is loaded.
+     * Uses a static initializer approach to avoid repeated directory creation attempts.
+     *
+     * @return The initialized temporary directory path, or null if creation fails
+     */
+    private static Path initializeAppTempDir() {
+        try {
+            Path tempDir = Path.of(System.getProperty("java.io.tmpdir"), "struts2-debug");
+            Files.createDirectories(tempDir);
+            LOG.debug("Initialized application temp directory: {}", tempDir);
+            return tempDir;
+        } catch (IOException e) {
+            LOG.warn("Failed to initialize application temp directory", e);
+            return null;
+        }
+    }
+
     private LinkedList<byte[]> buffers;
     private byte[] buffer;
     private int index;
@@ -164,22 +189,22 @@ public class FastByteArrayOutputStream extends OutputStream {
      * Creates a secure temporary file in a controlled application directory with UUID-based naming.
      *
      * Security Implementation:
-     * - Uses a controlled directory (java.io.tmpdir/struts2-debug) instead of relying on system defaults
+     * - Uses a pre-initialized controlled directory (java.io.tmpdir/struts2-debug) instead of system defaults
      * - Uses UUID-based naming to prevent filename predictability and collisions
-     * - Creates the parent directory if it doesn't exist
+     * - Directory is created once during class initialization for optimal performance
      *
      * @return A File object pointing to the newly created temporary file
-     * @throws IOException If directory creation or file creation fails
+     * @throws IOException If the application temp directory is not available or file creation fails
      */
-    protected File createSecureTemporaryFile() throws IOException {
-        // Use a controlled application-specific temporary directory
-        Path appTempDir = Path.of(System.getProperty("java.io.tmpdir"), "struts2-debug");
-        Files.createDirectories(appTempDir);
+    private File createSecureTemporaryFile() throws IOException {
+        if (APP_TEMP_DIR == null) {
+            throw new IOException("Application temp directory not available for debug output");
+        }
 
         // Use UUID-based naming to prevent predictability and collisions
         String uid = UUID.randomUUID().toString().replace("-", "_");
         String fileName = "debug_" + uid + ".log";
-        Path tempFilePath = appTempDir.resolve(fileName);
+        Path tempFilePath = APP_TEMP_DIR.resolve(fileName);
 
         LOG.debug("Creating secure temporary file: {}", tempFilePath);
         return tempFilePath.toFile();
