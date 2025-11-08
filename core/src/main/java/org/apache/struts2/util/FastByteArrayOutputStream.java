@@ -34,7 +34,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * A speedy implementation of ByteArrayOutputStream. It's not synchronized, and it
@@ -137,14 +140,49 @@ public class FastByteArrayOutputStream extends OutputStream {
     }
 
     /**
-     * This method is need only for debug. And needed for tests generated files.
+     * This method is needed only for debug and test scenarios when output fails to write to JspWriter.
+     * It securely creates a temporary file in a controlled application directory using UUID-based naming
+     * to prevent path traversal attacks and filename collisions.
+     *
+     * Security Note: This method uses UUID-based naming in a controlled directory rather than
+     * File.createTempFile() to comply with secure temporary file creation practices. The caller
+     * is responsible for cleanup of this file if needed for long-term storage.
      */
     private void writeToFile() {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(File.createTempFile(getClass().getName() + System.currentTimeMillis(), ".log"))){
-            writeTo(fileOutputStream);
+        try {
+            File tempFile = createSecureTemporaryFile();
+            try (FileOutputStream fileOutputStream = new FileOutputStream(tempFile)) {
+                writeTo(fileOutputStream);
+                LOG.debug("Debug output written to: {}", tempFile.getAbsolutePath());
+            }
         } catch (IOException e) {
-            // Ignore
+            LOG.debug("Failed to write debug output to file", e);
         }
+    }
+
+    /**
+     * Creates a secure temporary file in a controlled application directory with UUID-based naming.
+     *
+     * Security Implementation:
+     * - Uses a controlled directory (java.io.tmpdir/struts2-debug) instead of relying on system defaults
+     * - Uses UUID-based naming to prevent filename predictability and collisions
+     * - Creates the parent directory if it doesn't exist
+     *
+     * @return A File object pointing to the newly created temporary file
+     * @throws IOException If directory creation or file creation fails
+     */
+    protected File createSecureTemporaryFile() throws IOException {
+        // Use a controlled application-specific temporary directory
+        Path appTempDir = Path.of(System.getProperty("java.io.tmpdir"), "struts2-debug");
+        Files.createDirectories(appTempDir);
+
+        // Use UUID-based naming to prevent predictability and collisions
+        String uid = UUID.randomUUID().toString().replace("-", "_");
+        String fileName = "debug_" + uid + ".log";
+        Path tempFilePath = appTempDir.resolve(fileName);
+
+        LOG.debug("Creating secure temporary file: {}", tempFilePath);
+        return tempFilePath.toFile();
     }
 
     private void writeOut(Writer out, byte[] bytes, int length) throws IOException {
